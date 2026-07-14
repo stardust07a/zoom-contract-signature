@@ -1,0 +1,13 @@
+{
+  "name": "ZOOM Rent A Car — Sözleşme",
+  "short_name": "ZOOM Sözleşme",
+  "description": "Araç kiralama sözleşmesi ve dijital imza",
+  "start_url": "index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0c0f",
+  "theme_color": "#0b0c0f",
+  "icons": [
+    { "src": "assets/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

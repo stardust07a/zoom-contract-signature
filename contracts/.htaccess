@@ -1,0 +1,4 @@
+# Sözleşme PDF'leri, imzalar ve ayar dosyaları — dış erişime tamamen kapalı.
+# Bu dosyalara yalnızca PHP (download.php / get_contract.php giriş kontrolüyle) erişir.
+Require all denied
+Deny from all

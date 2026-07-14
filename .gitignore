@@ -1,0 +1,19 @@
+# Production database credentials
+api/db_config.php
+
+# Generated authentication, settings, contracts, signatures, and PDFs
+contracts/*
+!contracts/.htaccess
+
+# Composer dependencies and local packages
+vendor/
+api/vendor/
+
+# Environment, logs, and editor files
+.env
+.env.*
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

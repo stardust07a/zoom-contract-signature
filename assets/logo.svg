@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 340" width="760" height="340">
+  <defs>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f5f7fa"/>
+      <stop offset="18%" stop-color="#c2c8d0"/>
+      <stop offset="38%" stop-color="#3a3f47"/>
+      <stop offset="50%" stop-color="#0c0d10"/>
+      <stop offset="62%" stop-color="#2b2f36"/>
+      <stop offset="82%" stop-color="#b9c0c9"/>
+      <stop offset="100%" stop-color="#6e757e"/>
+    </linearGradient>
+    <linearGradient id="chrome2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eef1f5"/>
+      <stop offset="40%" stop-color="#454b54"/>
+      <stop offset="55%" stop-color="#101216"/>
+      <stop offset="100%" stop-color="#8b929b"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#cfe3ff" flood-opacity="0.85"/>
+    </filter>
+  </defs>
+  <g filter="url(#glow)" font-family="Arial Black, Arial, sans-serif" text-anchor="middle">
+    <text x="380" y="170" font-size="180" font-weight="900" letter-spacing="4"
+          fill="url(#chrome)" stroke="#e8f1ff" stroke-width="2">ZOOM</text>
+    <text x="380" y="268" font-size="78" font-weight="900" letter-spacing="8"
+          fill="url(#chrome2)" stroke="#e8f1ff" stroke-width="1.5">RENT A CAR</text>
+  </g>
+</svg>

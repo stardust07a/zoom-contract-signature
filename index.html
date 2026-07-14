@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#05060a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ZOOM Rent A Car</title>
+<link rel="apple-touch-icon" href="assets/logo.svg">
+<link rel="manifest" href="manifest.json">
+<style>
+:root{
+  --bg:#05060a; --panel:rgba(22,25,33,.72); --panel2:rgba(30,34,45,.6);
+  --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --txt:#f2f5f9; --muted:#99a2b2; --accent:#6ea8ff; --accent2:#9b8cff; --ok:#34d39a; --err:#ff6b6b;
+  --chrome:linear-gradient(180deg,#ffffff 0%,#e3e8ef 16%,#aab2be 50%,#cdd4dd 76%,#9099a5 100%);
+  --glass-sh:0 18px 40px -12px rgba(0,0,0,.7), 0 2px 0 rgba(255,255,255,.05) inset;
+  --r:20px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overscroll-behavior-y:none}
+body{background:
+  radial-gradient(60% 40% at 15% -5%, rgba(110,168,255,.18), transparent 60%),
+  radial-gradient(55% 45% at 100% 0%, rgba(155,140,255,.16), transparent 55%),
+  radial-gradient(80% 60% at 50% 120%, rgba(52,211,154,.08), transparent 60%),
+  var(--bg);}
+img{max-width:100%}
+.app{max-width:540px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+  padding-top:env(safe-area-inset-top)}
+/* ---- buttons ---- */
+.btn{position:relative;width:100%;padding:16px 18px;border:none;border-radius:16px;font-size:16px;font-weight:700;
+  cursor:pointer;margin-top:12px;letter-spacing:.2px;overflow:hidden;transition:transform .12s ease, filter .2s ease, box-shadow .2s}
+.btn:active{transform:translateY(1px) scale(.99)}
+.btn-primary{background:var(--chrome);color:#0a0c10;border:1px solid rgba(255,255,255,.55);
+  box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 -3px 8px rgba(0,0,0,.22) inset,0 12px 26px -8px rgba(0,0,0,.65);
+  text-shadow:0 1px 0 rgba(255,255,255,.45)}
+.btn-primary::after{content:"";position:absolute;top:-30%;left:-60%;width:38%;height:160%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.9),transparent);transform:skewX(-18deg);animation:shine 5s ease-in-out infinite}
+@keyframes shine{0%,62%{left:-60%}82%,100%{left:130%}}
+.btn-ghost{background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.03));color:var(--txt);
+  border:1px solid var(--line2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 8px 20px -10px rgba(0,0,0,.6)}
+.btn-danger{background:linear-gradient(180deg,#ff9a9a,#e04b4b);color:#2a0606;border:1px solid rgba(255,255,255,.3)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.btn-row{display:flex;gap:10px;margin-top:14px}.btn-row .btn{margin-top:0}
+.btn-sm{padding:11px 13px;font-size:14px;border-radius:13px}
+/* ---- login ---- */
+.login{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px}
+.login .logo{width:240px;max-width:76%;margin-bottom:32px;filter:drop-shadow(0 6px 26px rgba(110,168,255,.4))}
+.login .box{width:100%;max-width:370px;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:26px;
+  box-shadow:var(--glass-sh);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.login h2{margin:0 0 4px;font-size:19px;text-align:center;letter-spacing:.3px}
+.login p{margin:0 0 18px;text-align:center;color:var(--muted);font-size:13px}
+.login .err{color:var(--err);font-size:13px;text-align:center;min-height:18px;margin-top:8px}
+/* ---- header + tabs ---- */
+header{padding:18px 18px 6px;text-align:center;position:relative}
+header .logo{width:188px;max-width:60%;margin:0 auto;filter:drop-shadow(0 4px 18px rgba(110,168,255,.32))}
+.logout{position:absolute;top:16px;right:16px;font-size:12px;color:var(--muted);background:rgba(255,255,255,.06);
+  border:1px solid var(--line);border-radius:30px;padding:8px 13px;cursor:pointer;backdrop-filter:blur(8px)}
+.tabs{display:flex;gap:5px;margin:8px 14px 14px;padding:5px;background:rgba(255,255,255,.05);border:1px solid var(--line);
+  border-radius:16px;backdrop-filter:blur(12px);position:sticky;top:env(safe-area-inset-top);z-index:30}
+.tab{flex:1;padding:10px 4px;border-radius:12px;font-weight:700;font-size:12.5px;text-align:center;cursor:pointer;color:var(--muted);transition:.2s}
+.tab.active{color:#0a0c10;background:var(--chrome);box-shadow:0 6px 16px -6px rgba(0,0,0,.6);text-shadow:0 1px 0 rgba(255,255,255,.4)}
+main{flex:1;padding:4px 16px calc(40px + env(safe-area-inset-bottom));-webkit-overflow-scrolling:touch}
+.view{display:none}.view.active{display:block;animation:fade .3s cubic-bezier(.2,.7,.2,1)}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.progress{display:flex;gap:6px;margin:2px 0 16px}
+.progress span{flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.1)}
+.progress span.on{background:linear-gradient(90deg,var(--accent),var(--accent2));box-shadow:0 0 12px rgba(110,168,255,.5)}
+/* ---- cards ---- */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:14px;
+  box-shadow:var(--glass-sh);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.step{display:none}.step.active{display:block;animation:fade .3s cubic-bezier(.2,.7,.2,1)}
+h2{font-size:20px;margin:0 0 4px;letter-spacing:.2px}
+.h3{font-size:15px;margin:18px 0 2px;color:var(--accent);font-weight:700;display:flex;align-items:center;gap:8px}
+.h3::before{content:"";width:3px;height:15px;border-radius:3px;background:linear-gradient(var(--accent),var(--accent2))}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px;line-height:1.45}
+label{display:block;font-size:12.5px;color:var(--muted);margin:14px 0 6px;font-weight:600;letter-spacing:.2px}
+input,select{width:100%;padding:15px 14px;background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:14px;
+  color:var(--txt);font-size:16px;outline:none;transition:border-color .2s, box-shadow .2s, background .2s;appearance:none;-webkit-appearance:none}
+input::placeholder{color:#6b7280}
+input:focus,select:focus{border-color:var(--accent);background:rgba(110,168,255,.07);box-shadow:0 0 0 4px rgba(110,168,255,.16)}
+select{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2399a2b2' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>");background-repeat:no-repeat;background-position:right 14px center;padding-right:40px}
+input[type="date"],input[type="datetime-local"]{min-height:52px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.opt{font-weight:400;color:#6b7280;font-size:11px}
+.photos{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.photos .ph{position:relative;width:74px;height:74px;border-radius:13px;overflow:hidden;border:1px solid var(--line2);box-shadow:0 6px 14px -6px rgba(0,0,0,.6)}
+.photos .ph img{width:100%;height:100%;object-fit:cover}
+.photos .ph .x{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border-radius:50%;width:21px;height:21px;font-size:14px;line-height:21px;text-align:center;cursor:pointer;backdrop-filter:blur(4px)}
+.ocr-status{display:none;align-items:center;gap:10px;margin-top:12px;font-size:13px;color:var(--accent)}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.18);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* ---- contract doc (PDF source) ---- */
+.doc{background:#fff;color:#15181d;border-radius:12px;padding:18px;font-size:10.5px;line-height:1.42}
+.doc .hd{text-align:center;margin-bottom:6px}
+.doc .dlogo{width:150px;display:block;margin:0 auto 3px}
+.doc .hd small{display:block;color:#444;font-size:9px;margin-top:2px}
+.doc h1{text-align:center;font-size:14px;margin:8px 0 1px;letter-spacing:.5px}
+.doc .ar{font-size:11px;text-align:center;margin:0 0 8px;color:#333}
+.doc h3{font-size:10.5px;font-weight:400;color:#22304a;margin:11px 0 4px;padding:4px 8px;background:#eef1f6;border-left:3px solid #2b3a55;border-radius:4px}
+.doc table{width:100%;border-collapse:collapse;margin:4px 0}
+.doc td{border:1px solid #cfd4dc;padding:4px 7px;vertical-align:top}
+.doc td.k{width:38%;font-weight:400;color:#333;background:#f6f8fb}
+.doc p{margin:4px 0;text-align:justify}
+.doc .arp{color:#444;direction:rtl;text-align:right}
+.doc .sigwrap{display:flex;justify-content:space-between;margin-top:14px;gap:14px}
+.doc .sigbox{flex:1;text-align:center}
+.doc .sigline{height:60px;border:1px solid #b9c0cc;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#fbfcfe}
+.doc .sigbox span{font-size:9px;color:#444;display:block;margin-top:4px}
+.doc .meta{text-align:right;color:#777;font-size:9px;margin-top:8px}
+/* ---- signature pad ---- */
+.sigpad-wrap{position:relative;background:#fff;border-radius:16px;border:1px solid var(--line2);overflow:hidden;margin-top:8px;box-shadow:0 10px 24px -12px rgba(0,0,0,.7)}
+canvas.sig{width:100%;height:200px;display:block;touch-action:none}
+.sig-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#c2c2c2;pointer-events:none;font-size:14px}
+.saved-sig{background:#fff;border-radius:14px;border:1px solid var(--line2);padding:10px;text-align:center;margin-top:8px}
+.saved-sig img{max-height:80px}
+/* ---- done ---- */
+.done{text-align:center;padding:26px 10px}
+.done .check{width:80px;height:80px;border-radius:50%;background:radial-gradient(circle at 50% 35%,rgba(52,211,154,.3),rgba(52,211,154,.1));color:var(--ok);font-size:42px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;box-shadow:0 0 40px rgba(52,211,154,.3)}
+.badge{display:inline-block;font-size:11px;padding:4px 10px;border-radius:30px;margin:3px;font-weight:600}
+.badge.ok{background:rgba(52,211,154,.16);color:var(--ok)}.badge.warn{background:rgba(255,193,7,.16);color:#ffc94d}
+/* ---- list ---- */
+.search{position:relative;margin-bottom:10px}.search input{padding-left:42px}
+.search .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.filter{display:flex;gap:8px;margin-bottom:10px;align-items:flex-end}.filter>div{flex:1}.filter label{margin:0 0 5px}.filter .clr{flex:0 0 auto}
+.quick{display:flex;gap:8px;margin-bottom:10px}.quick .btn{margin:0}
+.empty{text-align:center;color:var(--muted);padding:54px 10px;line-height:1.6}
+.item{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;box-shadow:0 10px 24px -14px rgba(0,0,0,.7);backdrop-filter:blur(12px)}
+.item .av{width:44px;height:44px;border-radius:13px;background:var(--chrome);color:#0a0c10;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 10px -4px rgba(0,0,0,.6)}
+.item .info{flex:1;min-width:0}.item .info b{font-size:15px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.item .info small{color:var(--muted);font-size:11.5px;line-height:1.5}
+.item .act{display:flex;flex-direction:column;gap:6px}
+.item .ibtn{background:rgba(255,255,255,.07);border:1px solid var(--line2);color:var(--txt);border-radius:11px;padding:8px 11px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap}
+.item.fatura{border-left:3px solid var(--ok)}
+.item .ibtn.fat{color:var(--muted)}
+.item .ibtn.fat.on{background:rgba(52,211,154,.18);border-color:rgba(52,211,154,.5);color:var(--ok)}
+.item .kimlik{color:#8b93a1;font-size:11px}
+.carrow{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:13px;margin-bottom:9px}
+.carrow b{flex:1;font-size:14px;font-weight:600}.carrow .x{color:var(--err);cursor:pointer;font-weight:800;padding:4px 10px}
+/* ---- overlay / toast / modal ---- */
+.toast{position:fixed;bottom:calc(26px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,22,28,.95);color:#fff;padding:13px 20px;border-radius:30px;font-size:14px;opacity:0;transition:.3s;z-index:300;border:1px solid var(--line2);box-shadow:0 16px 40px -10px rgba(0,0,0,.8);max-width:90%}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.overlay{position:fixed;inset:0;background:rgba(5,6,10,.78);display:none;align-items:center;justify-content:center;z-index:280;backdrop-filter:blur(6px)}.overlay.show{display:flex}.overlay .box{text-align:center;color:#fff}
+.modal{position:fixed;inset:0;background:rgba(5,6,10,.7);display:none;align-items:center;justify-content:center;z-index:290;padding:18px;backdrop-filter:blur(6px)}.modal.show{display:flex}
+.modal .mbox{width:100%;max-width:410px;background:var(--panel);border:1px solid var(--line2);border-radius:22px;padding:22px;max-height:90vh;overflow:auto;box-shadow:var(--glass-sh);backdrop-filter:blur(24px)}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="login" id="login">
+  <img class="logo" src="assets/logo.svg" alt="ZOOM Rent A Car">
+  <div class="box">
+    <h2>Güvenli Giriş</h2><p>Devam etmek için giriş yapın</p>
+    <label>Kullanıcı adı</label><input id="lgUser" autocapitalize="none" placeholder="kullanıcı adı">
+    <label>Şifre</label><input id="lgPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn btn-primary" onclick="doLogin()" style="margin-top:20px">Giriş Yap</button>
+    <div class="err" id="lgErr"></div>
+  </div>
+</div>
+
+<div class="app hidden" id="appRoot">
+  <header><img class="logo" src="assets/logo.svg" alt="ZOOM Rent A Car"><div class="logout" onclick="doLogout()">Çıkış</div></header>
+  <nav class="tabs">
+    <div class="tab active" data-view="new">Yeni</div>
+    <div class="tab" data-view="list">Sözleşmeler</div>
+    <div class="tab" data-view="cars">Araçlar</div>
+    <div class="tab" data-view="settings">Ayarlar</div>
+  </nav>
+
+  <main>
+    <section class="view active" id="view-new">
+      <div class="progress" id="progress"></div>
+
+      <div class="step active" data-step="0">
+        <div class="card">
+          <h2>Araç ve Kiralama</h2>
+          <p class="sub">Plakayı seçin/yazın; kayıtlı araçsa model ve yıl otomatik gelir.</p>
+          <label>Kayıtlı Araç Seç</label>
+          <select id="carSelect" onchange="onCarSelect()"></select>
+          <label>Plaka</label>
+          <input id="plaka" placeholder="34 ABC 123" autocapitalize="characters" oninput="onPlaka()">
+          <label>Marka / Model</label><input id="model" placeholder="Örn: Cupra Formentor">
+          <label>Model Yılı</label><input id="yil" inputmode="numeric" placeholder="2022">
+          <label>Teslim KM (çıkış)</label><input id="teslimKm" inputmode="numeric" placeholder="örn: 45000">
+          <label>Araç Alış (Çıkış) Tarihi-Saati</label><input id="alis" type="datetime-local">
+          <label>Araç İade (Giriş) Tarihi-Saati</label><input id="iade" type="datetime-local">
+          <label>Sözleşme Yeri</label><input id="yer" placeholder="örn: İstanbul">
+          <button class="btn btn-primary" onclick="next()">Devam →</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="1">
+        <div class="card">
+          <h2>Kiracı Bilgileri</h2>
+          <p class="sub">Önce ülke seçin. Türkiye için kimlik/ehliyet fotoğrafından okunur.</p>
+          <div id="r1"></div>
+          <button class="btn btn-ghost btn-sm" id="addR2" onclick="toggleR2(true)" style="margin-top:16px">+ 2. Kiracı Ekle</button>
+          <div id="r2box" class="hidden" style="margin-top:14px">
+            <div class="h3">2. Kiracı</div>
+            <div id="r2"></div>
+            <button class="btn btn-danger btn-sm" onclick="toggleR2(false)" style="margin-top:10px">2. Kiracıyı Kaldır</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="prev()">← Geri</button>
+            <button class="btn btn-primary" onclick="goPreview()">Önizleme →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="2">
+        <div class="card">
+          <h2>Önizleme</h2>
+          <p class="sub">Kontrol edin, ardından imzaya geçin.</p>
+          <div id="doc" class="doc"></div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="prev()">← Geri</button>
+            <button class="btn btn-primary" onclick="goSign()">İmzaya Geç →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="3">
+        <div class="card">
+          <h2>İmza</h2>
+          <p class="sub">Telefonu kiracıya uzatın, imzalasın.</p>
+          <div class="h3" id="sig1Label">Kiracı 1 İmzası</div>
+          <div class="sigpad-wrap"><canvas id="sig" class="sig"></canvas><div class="sig-hint" id="sigHint">Buraya imzalayın</div></div>
+          <button class="btn btn-ghost btn-sm" onclick="clearSig()" style="margin-top:8px">Temizle</button>
+          <div id="sig2block" class="hidden">
+            <div class="h3">Kiracı 2 İmzası</div>
+            <div class="sigpad-wrap"><canvas id="sig2" class="sig"></canvas><div class="sig-hint" id="sig2Hint">Buraya imzalayın</div></div>
+            <button class="btn btn-ghost btn-sm" onclick="clearSig2()" style="margin-top:8px">Temizle</button>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="prev()">← Geri</button>
+            <button class="btn btn-primary" id="saveBtn" onclick="finish()">Kaydet ve Bitir</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="4">
+        <div class="card done">
+          <div class="check">✓</div><h2>Sözleşme Tamamlandı</h2>
+          <p class="sub" id="doneMsg"></p><div id="doneBadges"></div>
+          <button class="btn btn-primary" onclick="downloadAgain()" style="margin-top:18px">PDF'i Aç / İndir</button>
+          <button class="btn btn-ghost" onclick="location.reload()">Yeni Sözleşme</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="view-list">
+      <div class="search"><span class="ico">🔍</span><input id="searchInput" placeholder="İsimle / plakayla ara…" oninput="renderList()"></div>
+      <div class="filter">
+        <div><label>Başlangıç</label><input id="fStart" type="date" onchange="renderList()"></div>
+        <div><label>Bitiş</label><input id="fEnd" type="date" onchange="renderList()"></div>
+        <div class="clr"><label>&nbsp;</label><button class="btn btn-ghost btn-sm" style="margin:0" onclick="clearFilter()">Temizle</button></div>
+      </div>
+      <div class="quick">
+        <button class="btn btn-ghost btn-sm" onclick="setQuick('today')">Bugün</button>
+        <button class="btn btn-ghost btn-sm" onclick="setQuick('month')">Bu Ay</button>
+        <button class="btn btn-ghost btn-sm" onclick="setQuick('year')">Bu Yıl</button>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="downloadZip()" style="margin-bottom:12px">⬇ Seçili aralıktaki tüm PDF'leri ZIP indir</button>
+      <div id="listBox"></div>
+    </section>
+
+    <section class="view" id="view-cars">
+      <div class="card">
+        <h2>Araç Ekle</h2>
+        <p class="sub">Plakayı girince sözleşmede model ve yıl otomatik gelir.</p>
+        <label>Plaka</label><input id="cPlaka" placeholder="34 ABC 123" autocapitalize="characters">
+        <label>Marka / Model</label><input id="cModel" placeholder="Cupra Formentor">
+        <label>Model Yılı</label><input id="cYil" inputmode="numeric" placeholder="2022">
+        <button class="btn btn-primary" onclick="addCar()">Araç Ekle</button>
+      </div>
+      <div class="card"><h2>Kayıtlı Araçlar</h2><div id="carList"></div></div>
+    </section>
+
+    <section class="view" id="view-settings">
+      <div class="card">
+        <h2>Sözleşme Logosu</h2>
+        <p class="sub">Sözleşmenin en üstünde görünür. Yüklemezsen ZOOM logosu kullanılır.</p>
+        <div class="saved-sig hidden" id="logoPrev"><img id="logoPrevImg" alt=""></div>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('logoFile').click()" style="margin-top:8px">Logo Seç / Değiştir</button>
+        <input id="logoFile" type="file" accept="image/*" style="display:none" onchange="onLogo(event)">
+        <button class="btn btn-danger btn-sm hidden" id="logoDel" onclick="removeLogo()" style="margin-top:8px">Logoyu Kaldır</button>
+      </div>
+      <div class="card">
+        <h2>Şirket (Kiralayan) Bilgileri</h2>
+        <p class="sub">Her sözleşmede sabit; PDF başında logonun altında gösterilir.</p>
+        <label>Ad Soyad (yetkili)</label><input id="setAd" placeholder="Ayoup Almousa" oninput="noDigits(event)">
+        <label>Ünvan / Firma</label><input id="setUnvan" placeholder="ZOOM RENT A CAR">
+        <label>Adres</label><input id="setAdres" placeholder="Adres">
+        <label>Telefon</label><input id="setTel" placeholder="05XX XXX XX XX" oninput="fmtPhone(event)">
+        <label>E-posta</label><input id="setEmail" placeholder="info@zoom.com">
+        <label>Vergi No</label><input id="setVergi" placeholder="Vergi No">
+      </div>
+      <div class="card">
+        <h2>Sözleşme Değerleri</h2>
+        <label>Günlük KM Limiti</label><input id="setKm" inputmode="numeric" placeholder="150">
+        <label>Aşım Ücreti (₺/km)</label><input id="setExcess" inputmode="numeric" placeholder="15">
+        <label>Yetkili Mahkeme Şehri</label><input id="setCourt" placeholder="İstanbul">
+        <label>Sözleşme Yeri (varsayılan)</label><input id="setYer" placeholder="İstanbul">
+      </div>
+      <div class="card">
+        <h2>Şirket Sahibinin İmzası</h2>
+        <p class="sub">Bir kez imzalayın; her sözleşmede otomatik kullanılır.</p>
+        <div class="saved-sig hidden" id="savedSigWrap"><img id="savedSigImg" alt=""></div>
+        <div class="sigpad-wrap" id="ownerSigWrap"><canvas id="ownerSig" class="sig"></canvas><div class="sig-hint" id="ownerHint">Buraya imzalayın</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="clearOwnerSig()" style="margin-top:10px">Temizle</button>
+        <button class="btn btn-ghost btn-sm hidden" id="reSignBtn" onclick="reSignOwner()" style="margin-top:10px">Yeniden İmzala</button>
+      </div>
+      <button class="btn btn-primary" onclick="saveSettings()">Ayarları Kaydet</button>
+
+      <div class="card" style="margin-top:14px">
+        <h2>Giriş Bilgileri (Güvenlik)</h2>
+        <p class="sub">Kullanıcı adını ve şifreyi buradan değiştir. (Sunucuda saklanır.)</p>
+        <label>Yeni Kullanıcı Adı</label><input id="setUser" autocapitalize="none" placeholder="yeni kullanıcı adı">
+        <label>Yeni Şifre</label><input id="setPass" type="password" placeholder="yeni şifre (en az 4 karakter)">
+        <label>Mevcut Şifre (onay)</label><input id="setCurPass" type="password" placeholder="mevcut şifre">
+        <button class="btn btn-ghost" onclick="changeCreds()">Giriş Bilgilerini Güncelle</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal" id="editModal"><div class="mbox">
+  <h2>Düzenle</h2><p class="sub" id="editWho"></p>
+  <label>Adı</label><input id="eAd" oninput="noDigits(event)">
+  <label>Soyadı</label><input id="eSoyad" oninput="noDigits(event)">
+  <label>T.C. / Kimlik / Pasaport No</label><input id="eKimlik">
+  <label>Araç Alış (Çıkış)</label><input id="eAlis" type="datetime-local">
+  <label>Araç İade (Giriş)</label><input id="eIade" type="datetime-local">
+  <label>İade KM (dönüş)</label><input id="eIadeKm" inputmode="numeric" placeholder="örn: 45350">
+  <div class="btn-row"><button class="btn btn-ghost" onclick="closeEdit()">İptal</button><button class="btn btn-primary" onclick="saveEdit()">Kaydet + PDF</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+<div class="overlay" id="overlay"><div class="box"><div class="spinner" style="width:36px;height:36px;margin:0 auto 12px"></div><div id="overlayMsg">İşleniyor…</div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="app.js?v=19"></script>
+</body>
+</html>

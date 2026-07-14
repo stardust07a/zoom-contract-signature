@@ -1,0 +1,27 @@
+# ===== ZOOM Rent A Car — Güvenlik =====
+
+# Dizin listelemeyi kapat (klasör içerikleri görünmesin)
+Options -Indexes
+
+# Güvenlik başlıkları
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Hassas dosyalara dış erişimi engelle
+<FilesMatch "\.(sql|md|lock|log)$">
+  Require all denied
+</FilesMatch>
+<Files "composer.json">
+  Require all denied
+</Files>
+
+# ===== HTTPS zorlama =====
+# Hostinger'da SSL'i açtıktan SONRA aşağıdaki 3 satırın başındaki # işaretlerini kaldır.
+# (XAMPP/yerelde SSL olmadığı için KAPALI kalmalı, yoksa site açılmaz.)
+# RewriteEngine On
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
